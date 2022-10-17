@@ -1,8 +1,9 @@
 <div>
 
   <h4>Añade un libro</h4>
-  <form action="/books/create/add">
+  <form action="/books/create" method="POST">
   {{!-- action es a donde va a enviar la data --}}
+  {{!-- method es que tipo de llamada va a hacer => GET o POST --}}
     <label for="title">Titulo:</label>
     <input type="text" name="title" />
 
