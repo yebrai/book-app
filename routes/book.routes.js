@@ -70,7 +70,8 @@ router.get("/", (req, res, next) => {
     Book.create(bookToAdd)
     .then((response) => {
         console.log("libro añadido correctamente")
-
+        
+        //2 acer algo con el usuario
         res.redirect("/books")
         // no confundir con render
         //render apunta a un .hbs
@@ -80,13 +81,35 @@ router.get("/", (req, res, next) => {
         next(err)
     })
 
-    //2 acer algo con el usuario
     
+})
 
+//  UPDATE
 
+// GET "/books/:bookId/edit" => renderizar un formuñario incluyendo la data catual del libro
 
-  })
+router.get("/:bookId/edit", (req, res, next) => {
 
+    const {bookId} = req.params
+
+    // buscar los detalles del libro para pasarle a la vista
+
+    Book.findById(bookId)
+    .then((response) => {
+        console.log(response)
+        res.render("books/edit-form.hbs", {
+            details: response
+        })
+
+    })
+    .catch((err) => {
+        next(err)
+    })
+
+    
+})
+
+// POST "books/edit" => recibir valo para actualizar el libro
 
 module.exports = router;
 //siempre necesitamos estas lineas para crear nuevo archivos de rutas
