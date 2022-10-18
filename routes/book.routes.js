@@ -25,6 +25,7 @@ router.get("/", (req, res, next) => {
     const {bookId} = req.params
   
     Book.findById(bookId)
+    //en populate se introduce la propiedad que tiene el id del modelo
     .populate("author") //busca en la coleccion correspondiente esta propiedad
     .then((response) => {
       //console.log(response)
