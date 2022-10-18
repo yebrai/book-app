@@ -1,7 +1,7 @@
-const { Router } = require('express');
 const express = require('express');
+const Author = require('../models/Author.model.js');
 const router = express.Router();
-const Book = require("../models/book.model.js")
+const Book = require("../models/Book.model.js")
 
 // READ (LEER)
 // GET "/books" => ruta donde el usuario ve una lista
@@ -10,7 +10,7 @@ router.get("/", (req, res, next) => {
     Book.find()
     .select({title: 1})               //.select("title")
     .then((response) => {
-      console.log(response)
+      //console.log(response)
       res.render("books/list.hbs", {
         bookList: response
       })
@@ -25,8 +25,9 @@ router.get("/", (req, res, next) => {
     const {bookId} = req.params
   
     Book.findById(bookId)
+    .populate("author") //busca en la coleccion correspondiente esta propiedad
     .then((response) => {
-      console.log(response)
+      //console.log(response)
       res.render("books/details.hbs", {
         details: response
       })
@@ -42,15 +43,26 @@ router.get("/", (req, res, next) => {
 
   // CREATE
 // GET "/books/create" => ruta para renderizar a form
-  router.get("/create", (req, res, next) => {
+  router.get("/create", async (req, res, next) => {
 
-    res.render("books/create.hbs")
+    try {
+      //antes de renderizar voy a buscar todos los autores de la bBD
+      const authorList = await Author.find()
+      res.render("books/create.hbs", {
+        authorList
+      })
+    }
+    catch (error) {
+      next(error)
+    }
+
+
   })
 
   // POST "/books/create" => recibir data de form y crear libro 
   // el enlace es el mismo ya que al ser POST y no GET son distintas acciones
   router.post("/create", (req, res, next) => {
-      console.log(req.body) // aqui vendra todos los datos del form
+     // console.log(req.body) // aqui vendra todos los datos del form
     // con Destructuring
     //   const {title, description, author} = req.body
     //   let bookToAdd ={
@@ -91,25 +103,68 @@ router.get("/", (req, res, next) => {
 router.get("/:bookId/edit", (req, res, next) => {
 
     const {bookId} = req.params
-
+    console.log("esto es req.params:", req.params.bookId)
+    console.log("esto es desconstruc:", bookId)
     // buscar los detalles del libro para pasarle a la vista
 
     Book.findById(bookId)
     .then((response) => {
-        console.log(response)
+        //console.log(response)
+
         res.render("books/edit-form.hbs", {
             details: response
         })
+    })
+    .catch((error) => {
+          next(error)
+     })
+      
+ })
+
+
+
+// POST "books/edit" => recibir valo para actualizar el libro
+
+router.post("/:bookId/edit", (req, res, next) => {
+    
+    const { bookId } = req.params
+     const {title, description, author} = req.body
+     const bookUpdate ={
+         title,
+         description,
+         author
+     }
+    console.log("esto es req.body: ", req.body)
+    console.log("esto es el objeto creado: ", bookUpdate)
+    Book.findByIdAndUpdate(bookId, req.body)
+    .then(() => {
+
+       res.redirect("/books")
 
     })
     .catch((err) => {
         next(err)
     })
+})
+
+
+// DELETE (BORRAR)
+// POST "/books/:bookId/delete"
+
+router.post("/:bookId/delete",(req, res, next) => {
+
+    // 1 buscar el libro por su id y borrarlo
+    Book.findByIdAndDelete(req.params.bookId)
+    .then(() => {
+            // 2 redireccionar a "/books"
+        res.redirect("/books")
+    })
+    .catch((err) =>  {
+        next(err)
+    })
 
     
 })
-
-// POST "books/edit" => recibir valo para actualizar el libro
 
 module.exports = router;
 //siempre necesitamos estas lineas para crear nuevo archivos de rutas

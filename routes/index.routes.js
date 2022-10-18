@@ -11,4 +11,7 @@ router.get("/", (req, res, next) => {
 const bookRoutes = require("./book.routes.js")
 router.use("/books", bookRoutes)
 
+const authorRoutes = require("./author.routes.js")
+router.use("/authors", authorRoutes)
+
 module.exports = router;

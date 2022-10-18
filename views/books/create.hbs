@@ -15,8 +15,20 @@
     <br />
 
     <label for="author">Author:</label>
-    <input type="text" name="author" />
-    
+    {{!-- <input type="text" name="author"/> --}}
+
+    <select name="author" multiple="true">
+      {{!-- select se usa para abrir un desplegable de selecciones --}}
+    <option value="">Eliga autor</option>
+    {{#each authorList}}
+
+    <option value="{{_id}}">{{name}}</option>
+
+    {{/each}}
+
+    </select>
+
+
     <br />
 
     <button type="submit">Añadir</button>

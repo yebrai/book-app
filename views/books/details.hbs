@@ -7,16 +7,31 @@
 <h5>Author: {{book.author}}</h5>
 </div>   --}}
 
-    {{#with details}}
+    
     <div>
-        <h4>{{title}}</h4>
-        <p>{{description}}</p>
-        <h5>Author: {{author}}</h5>
+        <h4>{{details.title}}</h4>
+        <p>{{details.description}}</p>
+        {{!-- <h5>Author: {{details.author.name}}</h5>
+        <p>nacid@ en {{details.author.country}} en {{details.author.yearBorn}}</p> --}}
+
+        {{#each details.author}}
+         <h5>Author: {{name}}</h5>
+        <p>nacid@ en {{country}} en {{yearBorn}}</p>
+
+        {{/each}}
     </div>  
-    {{/with}}
+    
 
     <a href="/books/{{details._id}}/edit">
     <button>Ir a editar</button>
     </a>
+
+    
+            {{!-- <a href="/books/{{details._id}}/delete"> --}}
+        <form action="/books/{{details._id}}/delete" method="POST">
+        <button>Borrar</button>
+        </form>
+
+
 </div>
 
